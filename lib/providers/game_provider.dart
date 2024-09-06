@@ -1,3 +1,4 @@
+import 'dart:async';  // Import this for Timer
 import 'dart:math';
 import 'package:flutter/material.dart';
 import '../models/grid_item.dart';
@@ -11,11 +12,14 @@ class GameProvider with ChangeNotifier {
   final int maxLevel = 3;
   int highestPossibleScore = 0;
   bool isNextLevelEnabled = false;
+  int timeRemaining = 60;  // Set the initial time in seconds
+  Timer? _timer;
 
   final Random _random = Random();
 
   GameProvider() {
     _initializeGrid();
+    _startTimer();  // Start the timer when the game initializes
   }
 
   void _initializeGrid() {
@@ -147,9 +151,10 @@ class GameProvider with ChangeNotifier {
     score = 0;
     penalty = 0;
     previousColumnIndex = -1;
-    currentLevel = 1;
+    currentLevel = 1;  // Reset to level 1 when restarting
     isNextLevelEnabled = false;
     _initializeGrid();
+    _startTimer();  // Reset the timer
   }
 
   void nextLevel() {
@@ -165,15 +170,41 @@ class GameProvider with ChangeNotifier {
     previousColumnIndex = -1;
     isNextLevelEnabled = false;
     _initializeGrid();
+    _startTimer();  // Reset the timer
   }
 
   void checkIfNextLevelEnabled() {
     if (score >= highestPossibleScore) {
       isNextLevelEnabled = true;
-    } else {
-      isNextLevelEnabled = false;
     }
   }
 
-  bool isGameOver() => currentLevel >= maxLevel && grid.every((row) => row.every((item) => item.isSelected));
+  void _startTimer() {
+    _timer?.cancel();  // Cancel any previous timer
+    timeRemaining = 60;  // Set the timer to 60 seconds
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (timeRemaining > 0) {
+        timeRemaining--;
+        notifyListeners();
+      } else {
+        timer.cancel();
+        _showGameOverMessage();  // Show game over message and reset after delay
+      }
+    });
+  }
+
+  void _showGameOverMessage() {
+    timeRemaining = 0;  // Ensure timeRemaining is zero
+    notifyListeners();
+
+    Future.delayed(Duration(seconds: 2), () {
+      resetGame();  // Reset the game after a short delay
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();  // Clean up the timer when the provider is disposed
+    super.dispose();
+  }
 }

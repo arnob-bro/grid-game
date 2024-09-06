@@ -20,6 +20,18 @@ class GameScreen extends StatelessWidget {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              gameProvider.timeRemaining > 0
+                  ? 'Time Remaining: ${gameProvider.timeRemaining} seconds'
+                  : 'Game Over! Restarting...',
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: gameProvider.timeRemaining > 0 ? Colors.red : Colors.blue),
+            ),
+          ),
           Expanded(
             child: GridView.builder(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

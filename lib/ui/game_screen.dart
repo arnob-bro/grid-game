@@ -9,7 +9,7 @@ class GameScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Grid Game'),
+        title: Text('Grid Game '),
       ),
       body: Column(
         children: [
@@ -29,7 +29,9 @@ class GameScreen extends StatelessWidget {
               style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: gameProvider.timeRemaining > 0 ? Colors.red : Colors.blue),
+                  color: gameProvider.timeRemaining > 0
+                      ? Colors.red
+                      : Colors.blue),
             ),
           ),
           Expanded(
